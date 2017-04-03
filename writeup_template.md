@@ -216,3 +216,6 @@ I used this training data for training the model. The validation set helped dete
 The final results can be found in the links given below
 [with a throttle 0.25](./run1.mp4)
 [with a throttle 0.2](./run.mp4)
+
+# Discussion
+ I have checked car driving with various throttle values. The car can succesfully complete the track  with a maximum  throttle of 0.27 but with lot of wobbling. So i wanted to address the relationship between throttle and wobbling of the car using reinforcement learning in the future. I tried to complete track 2 but for ascending the car i need at least throttle of 0.3 so i had manually move the car at some places to complete the track. 
