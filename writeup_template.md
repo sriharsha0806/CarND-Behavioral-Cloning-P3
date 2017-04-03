@@ -22,13 +22,11 @@ The goals / steps of this project are the following:
 [video2]: ./run1_02.mp4
 
 # Approach for Designing Model Architecture
-. Initally i tried with Nvidia neural network without any preprocessing and but with Data Augmentation. The Model is not performing well. So i tried some preprocessing steps of my own and the model is based on S color of HSV image It is getting confused because of shadow of tree before bridge. 
-. I used Udacity Datatset so that i can work and compare my code with other members of my project. 
-. Udacity training set consists of 8036 samples. Each sample has frontal, left, right camera, throttle, steering, throttle, brake, speed.
-. The dataset has been cropped for saving computational power. The images after cropping can be seen in the images below.
-
-
-. Based on vivek's blog, I have implemented mirroring the images and changing the brighness of images randomly.
+* Initally i tried with Nvidia neural network without any preprocessing and but with Data Augmentation. The Model is not performing well. So i tried some preprocessing steps of my own and the model is based on S color of HSV image It is getting confused because of shadow of tree before bridge. 
+* I used Udacity Datatset so that i can work and compare my code with other members of my project. 
+* Udacity training set consists of 8036 samples. Each sample has frontal, left, right camera, throttle, steering, throttle, brake, speed.
+* The dataset has been cropped for saving computational power. The images after cropping can be seen in the images below.
+* Based on vivek's blog, I have implemented mirroring the images and changing the brighness of images randomly.
 
 ##Writeup Template
 
