@@ -14,7 +14,7 @@ The goals / steps of this project are the following:
 
 [image1]: ./nvidia_architecture.PNG "Model Visualization"
 [image2]: ./dataset_steering.png "steering  Dataset "
-[image3]: ./center_2016_12_01_13_48_287.jpg "Center Image"
+[image3]: ./center_2016_12_01_13_30_48_287.jpg "Center Image"
 [image4]: ./left_2016_12_01_13_30_48_287.jpg "Left Image"
 [image5]: ./right_2016_12_01_13_30_48_287.jpg "Right Image"
 [image6]: ./2017_04_03_16_19_07_524.jpg "preprocessed Image"
@@ -195,7 +195,7 @@ Here is a visualization of the architecture (note: visualizing the architecture 
 
 ####3. Creation of the Training Set & Training Process
 
-To capture good driving behavior, I first recorded two laps on track one using center lane driving and two laps on tracks using center lane driving using reverse direction and two laps of track 2. Here is an example image of center lane driving:
+To capture good driving behavior, I first recorded two laps on track one using center lane driving and two laps on tracks using center lane driving using reverse direction and two laps of track 2. Here is an example image of center lane driving and steering angle. The visualization shows the most of times the car is on the straight road:
 
 ![alt text][image2]
 
