@@ -1,108 +1,76 @@
-import csv
-import cv2
-import pandas as pd 
-import matplotlib
-import numpy as np 
-from matplotlib import image as mpimg
-import tensorflow as tf
-import numpy as np 
-from sklearn.utils import shuffle
-from PIL import Image
-from sklearn.model_selection import train_test_split
-
-from keras.models import Sequential, load_model
-from keras.layers.core import Lambda, Flatten, Dense, Activation, Dropout
+from keras.models import Sequential
 from keras.layers.convolutional import Convolution2D
+from keras.layers.core import Dense, Activation, Flatten, Dropout, Lambda 
+from keras.layers.pooling import MaxPooling2D
 from keras.layers.advanced_activations import ELU
+from keras.optimizers import Adam 
+from keras.regularizers import l2
+import keras.backend as K
+from config import *
+from load_data import generate_data_batch, split_train_val
+import tensorflow as tf 
+tf.python.control_flow_ops = tf 
 
+def get_nvidia_model(summary=True):
+    model = Sequential()
+    model.add(Lambda(lambda x: x/255.0-0.5,input_shape=(NVIDIA_H, NVIDIA_W, CONFIG['input_channels'])))
+    model.add(Convolution2D(24,5,5, subsample=(2,2), border_mode='valid', W_regularizer=l2(0.001)))
+    model.add(ELU())
+    model.add(Convolution2D(36,5,5, subsample=(2,2), border_mode='valid', W_regularizer=l2(0.001)))
+    model.add(ELU())
+    model.add(Convolution2D(48,5,5, subsample=(2,2), border_mode='valid', W_regularizer=l2(0.001)))
+    model.add(ELU())
+    model.add(Convolution2D(64,3,3, border_mode='valid', W_regularizer=l2(0.001)))
+    model.add(ELU())
+    model.add(Convolution2D(64,3,3, border_mode='valid', W_regularizer=l2(0.001)))
+    model.add(ELU())
+    model.add(Flatten())
+    model.add(Dropout(0.2))
+    model.add(Dense(100, W_regularizer=l2(0.001)))
+    model.add(ELU())
+    model.add(Dropout(0.2))
+    model.add(Dense(50, W_regularizer=l2(0.001)))
+    model.add(ELU())
+    model.add(Dropout(0.2))
+    model.add(Dense(10, W_regularizer=l2(0.001)))
+    model.add(ELU())
+    model.add(Dropout(0.5))
+    model.add(ELU())
+    model.add(Dense(1))
+    if summary:
+        model.summary()
+    return model   
 
-def preprocess(img):
-    new_img = img[50:140,:,:]
-    new_img = cv2.GaussianBlur(new_img,(5,5),0)
-    new_img = cv2.resize(new_img, (200,66), interpolation= cv2.INTER_AREA)
-    return new_img
+def comma_ai_model(summary=True):
+    ch, row, col = 3, 160, 320
+    model = Sequential()
+    model.add(Lambda(lambda x : x/255.0-0.5, input_shape=(row,col,ch)))
+    model.add(Convolution2D(16,8,8, subsample=(4,4), border_mode="same"))
+    model.add(ELU())
+    model.add(Convolution2D(32,5,5, subsample=(2,2), border_mode="same"))
+    model.add(ELU())
+    model.add(Convolution2D(64,5,5, subsample=(2,2), border_mode="same"))
+    model.add(Flatten())
+    model.add(Dropout(.2))
+    model.add(ELU())
+    model.add(Dense(512))
+    model.add(Dropout(.5))
+    model.add(ELU())
+    model.add(Dense(1))
+    if summary:
+        model.summary()
+    return model
 
-def read_data(batch_size=256):
-    """
-    Generator function to load driving logs and input images.
-    """
-    while 1:
-        with open('data/driving_log.csv') as driving_log_file:
-            driving_log_reader = csv.DictReader(driving_log_file)
-            count = 0
-            inputs = []
-            targets = []
-            try:
-                for row in driving_log_reader:
-                    steering_offset = 0.3
-
-                    centerImage = preprocess(mpimg.imread('data/'+ row['center'].strip()))
-                    flippedCenterImage = np.fliplr(centerImage)
-                    centerSteering = float(row['steering'])
-
-                    leftImage = preprocess(mpimg.imread('data/'+ row['left'].strip()))
-                    flippedLeftImage = np.fliplr(leftImage)
-                    leftSteering = centerSteering + steering_offset
-
-                    rightImage = preprocess(mpimg.imread('data/'+ row['right'].strip()))
-                    flippedRightImage = np.fliplr(rightImage)
-                    rightSteering = centerSteering - steering_offset
-
-                    if count == 0:
-                        inputs = np.empty([0, 66, 200, 3], dtype=float)
-                        targets = np.empty([0, ], dtype=float)
-                    if count < batch_size:
-                        inputs = np.append(inputs, np.array([centerImage, flippedCenterImage, leftImage, flippedLeftImage, rightImage, flippedRightImage]), axis=0)
-                        targets = np.append(targets, np.array([centerSteering, -centerSteering, leftSteering, -leftSteering, rightSteering, -rightSteering]), axis=0)
-                        count += 6
-                    else:
-                        yield inputs, targets
-                        count = 0
-            except StopIteration:
-                pass
-
-batch_size = 256
-use_transfer_learning = False
-
-# define model
-if use_transfer_learning:
-    model = load_model('model.h5')
-else:
-	model = Sequential()
-	# Layer 1 normalize
-	model.add(Lambda(lambda x: x/127.5 - 1.0,input_shape=(66,200,3)))
-	# Layer 2 convolutional layer 
-	model.add(Convolution2D(24,5,5, subsample=(2,2), border_mode='valid'))
-	model.add(ELU())
-	# Layer 3 convolution layer
-	model.add(Convolution2D(36,5,5, subsample=(2,2), border_mode='valid'))
-	model.add(ELU())
-	# Layer 4 convolutional layer
-	model.add(Convolution2D(48,5,5, subsample=(2,2), border_mode='valid'))
-	model.add(ELU())
-	# Layer 5 convolution layer
-	model.add(Convolution2D(64,3,3,  border_mode='valid'))
-	model.add(ELU())
-	# Layer 6 convolution layer
-	model.add(Convolution2D(64,3,3, border_mode='valid'))
-	model.add(ELU())
-	# Layer 7 Flatten
-	model.add(Flatten())
-	# Layer 8 dropout
-	model.add(Dropout(0.5))
-	# Layer 9 fully connected layer
-	model.add(Dense(100))
-	model.add(ELU())
-	# Layer 10 
-	model.add(Dense(50))
-	model.add(ELU())
-	# Layer 11
-	model.add(Dense(10))
-	model.add(ELU())
-	# Layer 12
-	model.add(Dense(1))
-	model.compile(loss='mse', optimizer='adam', metrics=['accuracy'])
-	model.summary()
-
-	model.fit_generator(read_data(), samples_per_epoch=8000*6, nb_epoch=1)
-	model.save('model.h5')
+if __name__ == '__main__':
+    # split udacity csv data into training and validation
+    train_data, val_data = split_train_val(csv_driving_data='data/driving_log.csv')
+    # get network model and compile it (default Adam opt)
+    nvidia_net = get_nvidia_model(summary=True)
+    adam = Adam(lr=1e-04, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0)
+    nvidia_net.compile(optimizer=adam, loss='mse')
+    nvidia_net.fit_generator(generator=generate_data_batch(train_data, augment_data=True, bias=CONFIG['bias']),
+                         samples_per_epoch=300*CONFIG['batchsize'],
+                         nb_epoch=5,
+                         validation_data=generate_data_batch(val_data, augment_data=False, bias=1.0),
+                         nb_val_samples=100*CONFIG['batchsize'])
+    nvidia_net.save('model.h5')
