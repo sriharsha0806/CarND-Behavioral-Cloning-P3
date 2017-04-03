@@ -12,7 +12,7 @@ The goals / steps of this project are the following:
 
 [//]: # (Image References)
 
-[image1]: ./nvidia_architecture.png "Model Visualization"
+[image1]: ./nvidia_architecture.PNG "Model Visualization"
 [image2]: ./dataset_steering.png "steering  Dataset "
 [image3]: ./center_2016_12_01_13_48_287.jpg "Center Image"
 [image4]: ./left_2016_12_01_13_30_48_287.jpg "Left Image"
@@ -64,6 +64,7 @@ The model.py file contains the code for training and saving the convolution neur
 I have implemented NVIDIA and commaai models. NVIDIA is comparatively performing during initial stages so i stick with Nvidia for working on Behavioral Cloning. 
 
 ####1. An appropriate model architecture has been employed
+# NVIDIA 
 ```sh
 
 Layer (type)                     Output Shape          Param #     Connected to                     
