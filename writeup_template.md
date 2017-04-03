@@ -64,6 +64,7 @@ The model.py file contains the code for training and saving the convolution neur
 I have implemented NVIDIA and commaai models. NVIDIA is comparatively performing during initial stages so i stick with Nvidia for working on Behavioral Cloning. 
 
 ####1. An appropriate model architecture has been employed
+```sh
 
 Layer (type)                     Output Shape          Param #     Connected to                     
 ====================================================================================================
@@ -117,7 +118,10 @@ dense_4 (Dense)                  (None, 1)             11          elu_9[0][0]
 ====================================================================================================
 Total params: 265,019
 Trainable params: 265,019
+```
 
+# Comma ai
+```sh
 Layer (type)                     Output Shape          Param #     Connected to                     
 ====================================================================================================
 lambda_2 (Lambda)                (None, 160, 320, 3)   0           lambda_input_2[0][0]             
@@ -148,7 +152,7 @@ dense_6 (Dense)                  (None, 1)             513         elu_13[0][0]
 ====================================================================================================
 Total params: 6,621,809
 Trainable params: 6,621,809
-
+```
 ![alt text][image1]
 
 ####2. Attempts to reduce overfitting in the model
