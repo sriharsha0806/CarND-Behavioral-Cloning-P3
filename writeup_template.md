@@ -214,5 +214,5 @@ I finally randomly shuffled the data set and put 2% of the data into a validatio
 I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was 5. I used an adam optimizer.
 
 The final results can be found in the links given below
-![with a throttle 0.25](video1)
-![with a throttle 0.2][video2]
+![with a throttle 0.25](./run1.mp4)
+![with a throttle 0.2](./run.mp4)
